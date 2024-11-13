@@ -1,1 +1,1 @@
-# @apps/next.js
+# `@apps/next.js`
