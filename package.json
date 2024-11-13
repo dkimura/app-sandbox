@@ -1,7 +1,9 @@
 {
   "name": "app-sandbox",
   "private": true,
-  "scripts": {},
+  "scripts": {
+    "codegen": "turbo run codegen"
+  },
   "author": "Daichi Kimura<dkimura@bdd.xyz>",
   "license": "MIT",
   "engines": {
