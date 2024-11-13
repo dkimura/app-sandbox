@@ -1,0 +1,330 @@
+openapi: 3.0.0
+info:
+  title: Blog API
+  version: '1.0'
+  description: Blog API with various caching patterns
+
+tags:
+  - name: posts
+    description: Blog post operations
+  - name: authors
+    description: Author operations
+  - name: analytics
+    description: Analytics and metrics operations
+  - name: categories
+    description: Category operations
+
+components:
+  schemas:
+    Post:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        title:
+          type: string
+        content:
+          type: string
+        authorId:
+          type: string
+          format: uuid
+        status:
+          type: string
+          enum: [draft, published]
+        viewCount:
+          type: integer
+        categoryIds:
+          type: array
+          items:
+            type: string
+            format: uuid
+        createdAt:
+          type: string
+          format: date-time
+        updatedAt:
+          type: string
+          format: date-time
+      required:
+        - id
+        - title
+        - content
+        - authorId
+        - status
+
+    Author:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        name:
+          type: string
+        email:
+          type: string
+          format: email
+        postCount:
+          type: integer
+        role:
+          type: string
+          enum: [admin, editor, writer]
+      required:
+        - id
+        - name
+        - email
+        - role
+
+    Category:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        name:
+          type: string
+        slug:
+          type: string
+        postCount:
+          type: integer
+      required:
+        - id
+        - name
+        - slug
+
+    PostList:
+      type: object
+      properties:
+        items:
+          type: array
+          items:
+            $ref: '#/components/schemas/Post'
+        total:
+          type: integer
+        page:
+          type: integer
+        pageSize:
+          type: integer
+
+    Analytics:
+      type: object
+      properties:
+        totalViews:
+          type: integer
+        uniqueVisitors:
+          type: integer
+        avgTimeOnPage:
+          type: number
+        bounceRate:
+          type: number
+
+  responses:
+    NotFound:
+      description: Resource not found
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              message:
+                type: string
+
+paths:
+  /posts:
+    get:
+      tags: [posts]
+      summary: List posts
+      parameters:
+        - name: page
+          in: query
+          schema:
+            type: integer
+            default: 1
+        - name: pageSize
+          in: query
+          schema:
+            type: integer
+            default: 10
+        - name: status
+          in: query
+          schema:
+            type: string
+            enum: [draft, published]
+        - name: categoryId
+          in: query
+          schema:
+            type: string
+            format: uuid
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PostList'
+
+    post:
+      tags: [posts]
+      summary: Create post
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                title:
+                  type: string
+                content:
+                  type: string
+                authorId:
+                  type: string
+                  format: uuid
+                categoryIds:
+                  type: array
+                  items:
+                    type: string
+                    format: uuid
+              required:
+                - title
+                - content
+                - authorId
+      responses:
+        '201':
+          description: Created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Post'
+
+  /posts/{postId}:
+    parameters:
+      - name: postId
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+
+    get:
+      tags: [posts]
+      summary: Get post by ID
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Post'
+        '404':
+          $ref: '#/components/responses/NotFound'
+
+    patch:
+      tags: [posts]
+      summary: Update post
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                title:
+                  type: string
+                content:
+                  type: string
+                status:
+                  type: string
+                  enum: [draft, published]
+                categoryIds:
+                  type: array
+                  items:
+                    type: string
+                    format: uuid
+      responses:
+        '200':
+          description: Updated
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Post'
+        '404':
+          $ref: '#/components/responses/NotFound'
+
+  /posts/{postId}/analytics:
+    parameters:
+      - name: postId
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+
+    get:
+      tags: [analytics]
+      summary: Get post analytics
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Analytics'
+
+  /posts/{postId}/view:
+    parameters:
+      - name: postId
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+
+    post:
+      tags: [analytics]
+      summary: Increment post view count
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  viewCount:
+                    type: integer
+
+  /authors/{authorId}:
+    parameters:
+      - name: authorId
+        in: path
+        required: true
+        schema:
+          type: string
+          format: uuid
+
+    get:
+      tags: [authors]
+      summary: Get author by ID
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Author'
+        '404':
+          $ref: '#/components/responses/NotFound'
+
+  /categories:
+    get:
+      tags: [categories]
+      summary: List categories
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Category'
