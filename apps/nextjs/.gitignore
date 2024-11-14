@@ -17,3 +17,6 @@ next-env.d.ts
 
 # orval
 src/__generated__/
+
+# msw
+mockServiceWorker.js
