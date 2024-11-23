@@ -1,7 +1,10 @@
+import { getPosts } from '@/__generated__/posts/posts'
 import Image from 'next/image'
 import styles from './page.module.css'
 
-export default function Home() {
+export default async function Home() {
+  const res = await getPosts()
+
   return (
     <div className={styles.page}>
       <main className={styles.main}>
@@ -19,6 +22,12 @@ export default function Home() {
           </li>
           <li>Save and see your changes instantly.</li>
         </ol>
+
+        <ul>
+          {res.data.items?.map(item => (
+            <li key={item.id}>{item.title}</li>
+          ))}
+        </ul>
 
         <div className={styles.ctas}>
           <a
