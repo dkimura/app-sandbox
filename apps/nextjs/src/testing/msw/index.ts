@@ -1,7 +1,5 @@
-import { isServer } from '@tanstack/react-query'
-
-async function initMocks() {
-  if (isServer) {
+export async function initMocks() {
+  if (typeof window === 'undefined') {
     const { server } = await import('./server')
     server.listen()
   } else {
@@ -9,5 +7,3 @@ async function initMocks() {
     worker.start()
   }
 }
-
-export { initMocks }
