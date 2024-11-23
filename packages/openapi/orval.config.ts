@@ -16,6 +16,12 @@ export default defineConfig({
         generateEachHttpStatus: true,
       },
       indexFiles: true,
+      override: {
+        mutator: {
+          path: '../../apps/nextjs/src/libs/axios.ts',
+          name: 'customInstance',
+        },
+      },
     },
     hooks: {
       afterAllFilesWrite: 'biome format --write',
