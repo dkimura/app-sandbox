@@ -21,6 +21,11 @@ export default defineConfig({
           path: '../../apps/nextjs/src/libs/axios.ts',
           name: 'customInstance',
         },
+        query: {
+          useQuery: true,
+          useSuspenseQuery: true,
+          usePrefetch: true,
+        },
       },
     },
     hooks: {
