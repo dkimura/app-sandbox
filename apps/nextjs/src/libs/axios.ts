@@ -1,8 +1,4 @@
-import Axios, {
-  type AxiosError,
-  type AxiosRequestConfig,
-  type AxiosResponse,
-} from 'axios'
+import Axios, { type AxiosError, type AxiosRequestConfig } from 'axios'
 
 export const AXIOS_INSTANCE = Axios.create({
   baseURL: process.env.NEXT_PUBLIC_API_URL,
@@ -11,13 +7,13 @@ export const AXIOS_INSTANCE = Axios.create({
 export const customInstance = <T>(
   config: AxiosRequestConfig,
   options?: AxiosRequestConfig,
-): Promise<AxiosResponse<T>> => {
+): Promise<T> => {
   const source = Axios.CancelToken.source()
   const promise = AXIOS_INSTANCE({
     ...config,
     ...options,
     cancelToken: source.token,
-  }).then(data => data)
+  }).then(({ data }) => data)
 
   // @ts-ignore
   promise.cancel = () => {
