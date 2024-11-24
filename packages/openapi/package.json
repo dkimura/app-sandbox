@@ -6,7 +6,7 @@
     "codegen": "orval"
   },
   "devDependencies": {
-    "orval": "7.2.0",
+    "orval": "7.3.0",
     "typescript": "5.6.3"
   }
 }
