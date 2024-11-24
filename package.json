@@ -3,7 +3,10 @@
   "private": true,
   "scripts": {
     "codegen": "turbo run codegen",
-    "dev": "turbo run dev"
+    "dev": "turbo run dev",
+    "format": "turbo run format",
+    "lint": "turbo run lint",
+    "test": "turbo run test"
   },
   "author": "Daichi Kimura<dkimura@bdd.xyz>",
   "license": "MIT",
